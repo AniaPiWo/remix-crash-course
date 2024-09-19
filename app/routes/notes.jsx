@@ -2,7 +2,13 @@ import { redirect } from "@remix-run/node";
 import { storeNotes, getStoredNotes } from "../data/notes";
 import NewNote, { links as newNoteLinks } from "../components/NewNote";
 import NoteList, { links as noteListLinks } from "../components/NoteList";
-import { useLoaderData } from "@remix-run/react";
+import {
+  useLoaderData,
+  /*   Link,
+  isRouteErrorResponse,
+  useRouteError, */
+  Outlet,
+} from "@remix-run/react";
 
 // runs on client side when GET is made to NotesPage
 export default function NotesPage() {
@@ -12,6 +18,7 @@ export default function NotesPage() {
     <main>
       <NewNote />
       <NoteList notes={notes} />
+      <Outlet />
     </main>
   );
 }
@@ -55,3 +62,62 @@ export async function action({ request }) {
 export function links() {
   return [...newNoteLinks(), ...noteListLinks()];
 }
+
+// this meta will be merged with meta from _index.jsx
+export const meta = () => [
+  {
+    title: "All Notes",
+    description: "Keep track of your notes",
+  },
+];
+
+// obsluga bledow TYLKO dla tej strony
+/* export function ErrorBoundary() {
+  const error = useRouteError();
+
+  // Obsługa błędów odpowiedzi HTTP
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data || "Something went wrong while fetching notes."}</p>
+        <p>
+          <Link to="/">Back to home</Link>
+        </p>
+      </div>
+    );
+  }
+
+  // Obsługa innych błędów (np. błędy runtime)
+  return (
+    <div>
+      <h1>An unexpected error occurred!</h1>
+      <p>{error.message}</p>
+      <p>
+        <Link to="/">Back to home</Link>
+      </p>
+    </div>
+  );
+}
+
+// Opcjonalnie możesz dodać CatchBoundary, jeśli chcesz obsługiwać specyficzne błędy HTTP
+export function CatchBoundary() {
+  const caught = useRouteError();
+
+  return (
+    <div>
+      <h1>
+        {caught.status}: {caught.statusText}
+      </h1>
+      <p>
+        {caught.data || "Sorry, we couldn't find what you were looking for."}
+      </p>
+      <p>
+        <Link to="/">Back to home</Link>
+      </p>
+    </div>
+  );
+}
+ */

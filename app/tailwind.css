@@ -42,15 +42,6 @@ body {
   min-height: 100vh;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
-}
-
 #main-navigation {
   padding: 2rem 15%;
   display: flex;

@@ -4,6 +4,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  Link,
+  isRouteErrorResponse,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
@@ -45,6 +48,101 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <MainNavigation />
         </header>
         {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  // Obsługa błędów odpowiedzi HTTP
+  if (isRouteErrorResponse(error)) {
+    return (
+      <html lang="en">
+        <head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <Meta />
+          <Links />
+          <title>
+            {error.status} {error.statusText}
+          </title>
+        </head>
+        <body>
+          <main className="error">
+            <h1>
+              {error.status}: {error.statusText}
+            </h1>
+            <p>{error.data?.message || "Something went wrong!"}</p>
+            <p>
+              <Link to="/">Back to main page</Link>
+            </p>
+          </main>
+          <ScrollRestoration />
+          <Scripts />
+        </body>
+      </html>
+    );
+  }
+
+  // Obsługa innych błędów (np. błędy runtime)
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+        <title>An error occurred</title>
+      </head>
+      <body>
+        <main className="error">
+          <h1>An unexpected error occurred!</h1>
+          <p>{(error as Error).message}</p>
+          <p>
+            <Link to="/">Back to main page</Link>
+          </p>
+        </main>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// Opcjonalnie możesz dodać CatchBoundary do obsługi specyficznych błędów HTTP
+export function CatchBoundary() {
+  const caught = useRouteError();
+
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+        <title>
+          {(caught as { status: number; statusText: string }).status}{" "}
+          {(caught as { status: number; statusText: string }).statusText}
+        </title>
+      </head>
+      <body>
+        <main className="error">
+          <h1>
+            {(caught as { status: number; statusText: string }).status}:{" "}
+            {(caught as { status: number; statusText: string }).statusText}
+          </h1>
+          <p>
+            {(caught as { data?: { message?: string } }).data?.message ||
+              "Something went wrong!"}
+          </p>
+          <p>
+            <Link to="/">Back to main page</Link>
+          </p>
+        </main>
         <ScrollRestoration />
         <Scripts />
       </body>

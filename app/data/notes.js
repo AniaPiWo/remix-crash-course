@@ -6,6 +6,7 @@ export async function getStoredNotes() {
   });
   const data = JSON.parse(rawFileContent);
   const storedNotes = data.notes ?? [];
+
   return storedNotes;
 }
 
